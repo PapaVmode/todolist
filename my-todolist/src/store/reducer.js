@@ -71,8 +71,16 @@ const reducer = (state = initialState, action) => {
               tasks: tl.tasks.map(t => {
                 if (t.id != action.taskId) {
                   return t;
-                } else {
-                  return { ...t, ...action.obj };
+                } else { 
+                  if(action.value === 2){
+                    return { ...t, 'status': true };
+                  }
+                  else if(action.value === 0) { 
+                    return {...t, 'status': false };
+                  }
+                  else {
+                    return { ...t, ...action.value };
+                  }
                 }
               })
             }
@@ -106,8 +114,10 @@ export const addTodolistAC = (newTodolist) => ({ type: ADD_TODOLIST, newTodolist
 export const deleteTodolistAC = (todolistId) => ({ type: DELETE_TODOLIST, todolistId })
 export const deleteTaskAC = (taskId, todolistId) => ({ type: DELETE_TASK, taskId, todolistId })
 export const addTaskAC = (newTask, todolistId) => ({ type: ADD_TASK, newTask, todolistId })
-export const updateTaskAC = (taskId, obj, todolistId) => ({ type: UPDATE_TASK, taskId, obj, todolistId })
+export const updateTaskAC = (taskId, value, todolistId) => ({ type: UPDATE_TASK, taskId, value, todolistId })
 export const setTodolistsAC = (todolist) => ({ type: SET_TODOLISTS, todolist })
 export const setTasksAC = (allTasks, todoListId) => ({ type: SET_TASKS, allTasks, todoListId })
 
 export default reducer;
+
+export let stateWindow = window.initialState;
