@@ -6,7 +6,7 @@ import TodoListTitle from "./Header/TodoListTitle";
 import { connect } from "react-redux";
 import AddNewItemForm from './Header/AddNewItemForm';
 import { addTaskAC, updateTaskAC, deleteTaskAC, deleteTodolistAC, setTasksAC } from './store/reducer';
-import axios from 'axios';
+import api from './api';
 
 class TodoList extends React.Component {
 
@@ -25,16 +25,10 @@ class TodoList extends React.Component {
     //     localStorage.setItem("our-state-" + this.props.id, stateAsString);
     // }
     restoreState = () => {
-        axios.get(`https://social-network.samuraijs.com/api/1.1/todo-lists/${this.props.id}/tasks`,
-            {
-                withCredentials: true,
-                headers: { "API-KEY": "5c290fd1-469a-4d48-b513-f9d989779d32" }
-            }
-        )
-            .then(response => {
-                let allTasks = response.data.items;
-                this.props.setTasks(allTasks, this.props.id);
-            })
+        api.restoreStateTasks(this.props.id).then(response => {
+            let allTasks = response.data.items;
+            this.props.setTasks(allTasks, this.props.id);
+        })
     }
 
     // _restoreState = () => {
@@ -62,16 +56,9 @@ class TodoList extends React.Component {
     };
 
     addTask = (newText) => {
-        axios.post(`https://social-network.samuraijs.com/api/1.1/todo-lists/${this.props.id}/tasks`,
-            { title: newText },
-            {
-                withCredentials: true,
-                headers: { "API-KEY": "5c290fd1-469a-4d48-b513-f9d989779d32" }
-            }
-        )
-            .then(response => {
-                this.props.addTask(response.data.data.item, this.props.id);
-            })
+        api.createTodolist(newText, this.props.id).then(response => {
+            this.props.addTask(response.data.data.item, response.data.data.item.todoListId);
+        })
     }
 
     changeFilter = (newFilterValue) => {
@@ -107,9 +94,9 @@ class TodoList extends React.Component {
                                         ...t, ...value
                                     }
                                 } else
-                                return {
-                                    ...t, ...value
-                                }
+                                    return {
+                                        ...t, ...value
+                                    }
                             }
                         })
                     }
@@ -117,13 +104,7 @@ class TodoList extends React.Component {
         }
         let b = updateTaskModel();
         debugger
-        axios.put(`https://social-network.samuraijs.com/api/1.1/todo-lists/${this.props.id}/tasks/${taskId}`,
-            b[0],
-            {
-                withCredentials: true,
-                headers: { "API-KEY": "5c290fd1-469a-4d48-b513-f9d989779d32" },
-            }
-        )
+        api.changeTask(b[0], this.props.id, taskId)
             .then(response => {
                 debugger
                 this.props.updateTask(response.data.data.item.id, response.data.data.item, this.props.id);
@@ -139,12 +120,7 @@ class TodoList extends React.Component {
     }
 
     deleteTodolist = () => {
-        axios.delete(`https://social-network.samuraijs.com/api/1.1/todo-lists/${this.props.id}`,
-            {
-                withCredentials: true,
-                headers: { "API-KEY": "5c290fd1-469a-4d48-b513-f9d989779d32" }
-            }
-        )
+        api.deleteTodolist(this.props.id)
             .then(response => {
                 if (response.data.resultCode === 0) {
                     this.props.deleteTodolist(this.props.id);
@@ -153,12 +129,7 @@ class TodoList extends React.Component {
     }
 
     deleteTask = (taskId) => {
-        axios.delete(`https://social-network.samuraijs.com/api/1.1/todo-lists/${this.props.id}/tasks/${taskId}`,
-            {
-                withCredentials: true,
-                headers: { "API-KEY": "5c290fd1-469a-4d48-b513-f9d989779d32" }
-            }
-        )
+        api.deleteTask(this.props.id, taskId)
             .then(response => {
                 if (response.data.resultCode === 0) {
                     this.props.deleteTask(taskId, this.props.id);

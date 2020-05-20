@@ -53,7 +53,7 @@ class TodoListTask extends React.Component {
                     onChange={this.onIsDoneChanged} />
                 {this.state.editMode
                     ? <input onBlur={this.deactivateEditMode} onChange={this.onTitleChanged} autoFocus={true} value={this.state.title} />
-                    : <span onClick={this.activateEditMode}>{this.props.task.id} - {this.props.task.title}</span>
+                    : <span onClick={this.activateEditMode}>{this.props.task.id} - {this.state.title}</span>
                 }, priority: {this._priorityName()} <button onClick={this.onDeleteTask}>X</button>
             </div>
         );
