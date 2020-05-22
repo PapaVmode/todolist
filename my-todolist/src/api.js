@@ -22,7 +22,7 @@ const api = {
   changeTodolist(title, todolistId) {
     return instance.put(`${todolistId}`, { title: title });
   },
-  changeTask(object, id, taskId) {
+  changeTask(id, object, taskId) {
     return instance.put(`${id}/tasks/${taskId}`, object);
   },
   deleteTodolist(id) {

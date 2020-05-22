@@ -41,53 +41,28 @@ class TodoList extends React.Component {
         });
     }
 
-    changeTask = (taskId, value, obj) => {
-        let updateTaskModel = () => {
-            switch (obj.type) {
-                case 'UPDATE_TASK_STATUS_CODE':
-                    return {
-                        ...this.props.tasks.map(t => {
-                            if (t.id !== taskId) {
-                                return t
-                            } else {
-                                return {
-                                    ...t, ...value
-                                }
-                            }
-                        })
-                    }
-                case 'UPDATE_TASK_TITILE':
-                    return {
-                        ...this.props.tasks.map(t => {
-                            if (t.id !== taskId) {
-                                return t
-                            } else {
-                                if (value.title !== '') {
-                                    return {
-                                        ...t, ...value
-                                    }
-                                } else
-                                    return {
-                                        ...t, ...value
-                                    }
-                            }
-                        })
-                    }
+    changeTask = (taskId, obj) => {
+        this.props.tasks.forEach(t => {
+            if (t.id === taskId) {
+                if (obj === 2 || obj === 0) {
+                    obj = { ...t, status: obj };
+                } else {
+                    obj = { ...t, title: obj };
+                }
+                api.changeTask(t.todoListId, obj, taskId)
+                    .then(res => {
+                        this.props.updateTask(taskId, obj, res.data.data.item.todoListId);
+                    });
             }
-        }
-        let b = updateTaskModel();
-        api.changeTask(b[0], this.props.id, taskId)
-            .then(response => {
-                this.props.updateTask(response.data.data.item.id, response.data.data.item, this.props.id);
-            })
+        })
     }
 
-    changeStatus = (taskId, statusCode) => {
-        this.changeTask(taskId, { status: statusCode }, { type: 'UPDATE_TASK_STATUS_CODE' });
+    changeStatus = (taskId, status) => {
+        this.changeTask(taskId, status);
     }
 
     changeTitle = (taskId, title) => {
-        this.changeTask(taskId, { title: title }, { type: 'UPDATE_TASK_TITILE' });
+        this.changeTask(taskId, title);
     }
 
     deleteTodolist = () => {
@@ -156,8 +131,8 @@ const mapDispatchToProps = (dispatch) => {
         addTask(newTask, todolistId) {
             dispatch(addTaskAC(newTask, todolistId));
         },
-        updateTask(taskId, value, todolistId) {
-            dispatch(updateTaskAC(taskId, value, todolistId));
+        updateTask(taskId, object, todolistId) {
+            dispatch(updateTaskAC(taskId, object, todolistId));
         },
         deleteTodolist: (todolistId) => {
             dispatch(deleteTodolistAC(todolistId))

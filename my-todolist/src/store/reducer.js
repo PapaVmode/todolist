@@ -69,18 +69,10 @@ const reducer = (state = initialState, action) => {
             return {
               ...tl,
               tasks: tl.tasks.map(t => {
-                if (t.id != action.taskId) {
+                if (t.id != action.taskId) {  
                   return t;
                 } else { 
-                  if(action.value === 2){
-                    return { ...t, 'status': true };
-                  }
-                  else if(action.value === 0) { 
-                    return {...t, 'status': false };
-                  }
-                  else {
                     return { ...t, ...action.value };
-                  }
                 }
               })
             }
