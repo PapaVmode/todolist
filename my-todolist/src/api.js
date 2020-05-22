@@ -13,11 +13,14 @@ const api = {
   createTodolist(newText, id) {
     return instance.post(`${id}/tasks`, { title: newText });
   },
-  restoreStateTodolist(){
+  restoreStateTodolist() {
     return instance.get('');
   },
   restoreStateTasks(id) {
     return instance.get(`${id}/tasks`);
+  },
+  changeTodolist(title, todolistId) {
+    return instance.put(`${todolistId}`, { title: title });
   },
   changeTask(object, id, taskId) {
     return instance.put(`${id}/tasks/${taskId}`, object);

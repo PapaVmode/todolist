@@ -14,46 +14,20 @@ class TodoList extends React.Component {
         super(props);
     }
 
+    state = {
+        filterValue: "All",
+    };
+
     componentDidMount() {
         this.restoreState();
     }
 
-    // saveState = () => {
-    //     // переводим объект в строку
-    //     let stateAsString = JSON.stringify(this.state);
-    //     // сохраняем нашу строку в localStorage под ключом "our-state"
-    //     localStorage.setItem("our-state-" + this.props.id, stateAsString);
-    // }
     restoreState = () => {
         api.restoreStateTasks(this.props.id).then(response => {
             let allTasks = response.data.items;
             this.props.setTasks(allTasks, this.props.id);
         })
     }
-
-    // _restoreState = () => {
-    //     // объявляем наш стейт стартовый
-    //     let state = this.state;
-    //     // считываем сохранённую ранее строку из localStorage
-    //     let stateAsString = localStorage.getItem("our-state-" + this.props.id);
-    //     // а вдруг ещё не было ни одного сохранения?? тогда будет null.
-    //     // если не null, тогда превращаем строку в объект
-    //     if (stateAsString != null) {
-    //         state = JSON.parse(stateAsString);
-    //     }
-    //     // устанавливаем стейт (либо пустой, либо восстановленный) в стейт
-    //     this.setState(state, () => {
-    //         this.state.tasks.forEach(t => {
-    //             if (t.id >= this.nextTaskId) {
-    //                 this.nextTaskId = t.id + 1;
-    //             }
-    //         })
-    //     });
-    // }
-
-    state = {
-        filterValue: "All"
-    };
 
     addTask = (newText) => {
         api.createTodolist(newText, this.props.id).then(response => {
@@ -65,7 +39,6 @@ class TodoList extends React.Component {
         this.setState({
             filterValue: newFilterValue
         });
-        // }, () => { this.saveState(); });
     }
 
     changeTask = (taskId, value, obj) => {
@@ -103,10 +76,8 @@ class TodoList extends React.Component {
             }
         }
         let b = updateTaskModel();
-        debugger
         api.changeTask(b[0], this.props.id, taskId)
             .then(response => {
-                debugger
                 this.props.updateTask(response.data.data.item.id, response.data.data.item, this.props.id);
             })
     }
@@ -137,12 +108,20 @@ class TodoList extends React.Component {
             })
     }
 
+    changeTodolistTitle = (title) => {
+        api.changeTodolist(title, this.props.id);
+    }
+
     render = () => {
         let { tasks = [] } = this.props;
         return (
             <div className="todoList">
                 <div className="todoList-header">
-                    <TodoListTitle title={this.props.title} onDelete={this.deleteTodolist} />
+                    <TodoListTitle
+                        title={this.props.title}
+                        onDelete={this.deleteTodolist}
+                        changeTodolistTitle={this.changeTodolistTitle}
+                    />
                     <AddNewItemForm addItem={this.addTask} />
 
                 </div>
